@@ -1535,9 +1535,9 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(66, $eastCnt, $companyResultList['LC_3m_total']);
 
 				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(68, $eastCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $eastCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(70, $eastCnt, $companyResultList['LM_year_total']);
+				$objSheet->setCellValueByColumnAndRow(67, $eastCnt, $companyResultList['LM_half1_total']);
+				$objSheet->setCellValueByColumnAndRow(68, $eastCnt, $companyResultList['LM_half2_total']);
+				$objSheet->setCellValueByColumnAndRow(69, $eastCnt, $companyResultList['LM_year_total']);
 			}
 			// 中央地区
 			if ($executiveArray['area'] === '中央地区') {
@@ -1610,9 +1610,9 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(66, $centralCnt, $companyResultList['LC_3m_total']);
 
 				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(68, $centralCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $centralCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(70, $centralCnt, $companyResultList['LM_year_total']);
+				$objSheet->setCellValueByColumnAndRow(67, $centralCnt, $companyResultList['LM_half1_total']);
+				$objSheet->setCellValueByColumnAndRow(68, $centralCnt, $companyResultList['LM_half2_total']);
+				$objSheet->setCellValueByColumnAndRow(69, $centralCnt, $companyResultList['LM_year_total']);
 			}
 			// 西地区
 			if ($executiveArray['area'] === '西地区') {
@@ -1685,9 +1685,9 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(66, $westCnt, $companyResultList['LC_3m_total']);
 
 				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(68, $westCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $westCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(70, $westCnt, $companyResultList['LM_year_total']);
+				$objSheet->setCellValueByColumnAndRow(67, $westCnt, $companyResultList['LM_half1_total']);
+				$objSheet->setCellValueByColumnAndRow(68, $westCnt, $companyResultList['LM_half2_total']);
+				$objSheet->setCellValueByColumnAndRow(69, $westCnt, $companyResultList['LM_year_total']);
 			}
 
 			// 同友に出力する行を次の同友に移動させる
