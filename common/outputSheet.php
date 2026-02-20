@@ -882,6 +882,7 @@ function makeExecutiveDownloadSheet($fiscal_year, $campaign) {
 					$columnCnt += 2;
 				}
 			}
+			
 			//printArray($planTotalList);
 
 			// シート数をカウント
@@ -1735,8 +1736,12 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				// LC 7月、11月、3月
 				$objSheet->setCellValueByColumnAndRow(20, 7, $companyResultList['LC_7m_total']);
 				$objSheet->setCellValueByColumnAndRow(21, 7, $companyResultList['LC_11m_total']);
-				$objSheet->setCellValueByColumnAndRow(22, 7, $companyResultList['LC_3m_total']);				
-
+				$objSheet->setCellValueByColumnAndRow(22, 7, $companyResultList['LC_3m_total']);
+				
+				// LM 上期、下期、年間を合算して出力
+				$objSheet->setCellValueByColumnAndRow(20, 14, $companyResultList['LM_half1_total']); 	// LM上期(U列)
+				$objSheet->setCellValueByColumnAndRow(21, 14, $companyResultList['LM_half2_total']); 	// LM下期(V列)
+				$objSheet->setCellValueByColumnAndRow(22, 14, $companyResultList['LM_year_total']); 	// LM年間(W列)
 				
 				//---------------------------------------------------
 				// 同友チャレンジシート
