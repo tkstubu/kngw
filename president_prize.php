@@ -229,12 +229,27 @@ function printLMLSBonusPrizeTable($postArray, &$listArray) {
 	echo '<p class="bold">＜1-3月＞</p>';
 	printLMLSBonusPrizeQuarterTable($postArray,$listArray, 4);
 
-	// LM、LSボーナス賞金計算
+	// LMボーナス賞金計算
 	$lm_bonus_prize_1_half = $listArray['other_prize']['lm_bonus_prize_1_half'] * ($listArray['data_list']['LM']['result']['1_quarter']+$listArray['data_list']['LM']['result']['2_quarter']-$listArray['data_list']['LM-M']['result']['1_quarter']-$listArray['data_list']['LM-M']['result']['2_quarter']);
 	$lm_bonus_prize_2_half = $listArray['other_prize']['lm_bonus_prize_2_half'] * ($listArray['data_list']['LM']['result']['3_quarter']+$listArray['data_list']['LM']['result']['4_quarter']-$listArray['data_list']['LM-M']['result']['3_quarter']-$listArray['data_list']['LM-M']['result']['4_quarter']);
-	$ls_bonus_prize_1_half = $listArray['other_prize']['ls_bonus_prize_1_half'] * ($listArray['data_list']['LS']['result']['1_quarter']+$listArray['data_list']['LS']['result']['2_quarter']);
-	$ls_bonus_prize_2_half = $listArray['other_prize']['ls_bonus_prize_2_half'] * ($listArray['data_list']['LS']['result']['3_quarter']+$listArray['data_list']['LS']['result']['4_quarter']);
+	
+	// LSのボーナス賞金計算は、四半期ごとの実績値から調整済みの実績値を取得して計算する
+	//$ls_bonus_prize_1_half = $listArray['other_prize']['ls_bonus_prize_1_half'] * ($listArray['data_list']['LS']['result']['1_quarter']+$listArray['data_list']['LS']['result']['2_quarter']);
+	//$ls_bonus_prize_2_half = $listArray['other_prize']['ls_bonus_prize_2_half'] * ($listArray['data_list']['LS']['result']['3_quarter']+$listArray['data_list']['LS']['result']['4_quarter']);
+	$ls_half1_count = 0;
+	$ls_half2_count = 0;
 
+	foreach ($listArray['executive_list'] as $executiveArray) {
+		$ls_half1_count += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], 1);
+		$ls_half1_count += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], 2);
+		$ls_half2_count += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], 3);
+		$ls_half2_count += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], 4);
+	}
+
+	$ls_bonus_prize_1_half = $listArray['other_prize']['ls_bonus_prize_1_half'] * $ls_half1_count;
+	$ls_bonus_prize_2_half = $listArray['other_prize']['ls_bonus_prize_2_half'] * $ls_half2_count;
+
+	// 表示
 	echo '<br /><p class="bold">＜ボーナス賞金＞</p>';
 	echo '<table>';
 	echo '<tr class="bg_wet_asphalt"><td width="50px">種目</td><td width="150px">上期ボーナス賞金 (円)</td><td width="150px">下期ボーナス賞金 (円)</td></tr>';
@@ -247,6 +262,58 @@ function printLMLSBonusPrizeTable($postArray, &$listArray) {
 	$listArray['prize_list']['LM'] += round($lm_bonus_prize_2_half);
 	$listArray['prize_list']['LS'] += round($ls_bonus_prize_1_half);
 	$listArray['prize_list']['LS'] += round($ls_bonus_prize_2_half);
+}
+
+/*
+ * ----------------------------------------------------------
+ * getAdjustedExecutiveLSQuarterResult()
+ * 1.LS販促費の四半期用の実績値を取得する
+ * @param $fiscal_year：年度
+ * @param $executive_id：同友ID
+ * @param $quarter：四半期
+ * ----------------------------------------------------------
+ */
+function getAdjustedExecutiveLSQuarterResult($fiscal_year, $executive_id, $quarter) {
+
+    $ls_data = getExecutiveResultTotalValue($fiscal_year, 'LS', '%', 'TOTAL', $executive_id);
+	$sub_data1 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_1', '%', 'TOTAL', $executive_id);	// 補助科目 2-1
+	$sub_data2 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_4', '%', 'TOTAL', $executive_id);	// 補助科目 2-4
+    $sub_data3 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_5', '%', 'TOTAL', $executive_id);	// 補助科目 2-5
+
+    $ls_result = 0;
+    $sub_result1 = 0;
+    $sub_result2 = 0;
+    $sub_result3 = 0;
+
+    switch ($quarter) {
+        case 1:
+            $ls_result = $ls_data[0]['4_result'] + $ls_data[0]['5_result'] + $ls_data[0]['6_result'];
+            $sub_result1 = $sub_data1[0]['4_result'] + $sub_data1[0]['5_result'] + $sub_data1[0]['6_result'];
+            $sub_result2 = $sub_data2[0]['4_result'] + $sub_data2[0]['5_result'] + $sub_data2[0]['6_result'];
+            $sub_result3 = $sub_data3[0]['4_result'] + $sub_data3[0]['5_result'] + $sub_data3[0]['6_result'];
+            break;
+        case 2:
+            $ls_result = $ls_data[0]['7_result'] + $ls_data[0]['8_result'] + $ls_data[0]['9_result'];
+            $sub_result1 = $sub_data1[0]['7_result'] + $sub_data1[0]['8_result'] + $sub_data1[0]['9_result'];
+            $sub_result2 = $sub_data2[0]['7_result'] + $sub_data2[0]['8_result'] + $sub_data2[0]['9_result'];
+            $sub_result3 = $sub_data3[0]['7_result'] + $sub_data3[0]['8_result'] + $sub_data3[0]['9_result'];
+            break;
+        case 3:
+            $ls_result = $ls_data[0]['10_result'] + $ls_data[0]['11_result'] + $ls_data[0]['12_result'];
+            $sub_result1 = $sub_data1[0]['10_result'] + $sub_data1[0]['11_result'] + $sub_data1[0]['12_result'];
+            $sub_result2 = $sub_data2[0]['10_result'] + $sub_data2[0]['11_result'] + $sub_data2[0]['12_result'];
+            $sub_result3 = $sub_data3[0]['10_result'] + $sub_data3[0]['11_result'] + $sub_data3[0]['12_result'];
+            break;
+        case 4:
+            $ls_result = $ls_data[0]['1_result'] + $ls_data[0]['2_result'] + $ls_data[0]['3_result'];
+            $sub_result1 = $sub_data1[0]['1_result'] + $sub_data1[0]['2_result'] + $sub_data1[0]['3_result'];
+            $sub_result2 = $sub_data2[0]['1_result'] + $sub_data2[0]['2_result'] + $sub_data2[0]['3_result'];
+            $sub_result3 = $sub_data3[0]['1_result'] + $sub_data3[0]['2_result'] + $sub_data3[0]['3_result'];
+            break;
+    }
+
+	// LSの販促費の計算は、LSの実績値から補助科目の実績値を引いた値を使用する
+    return max(0, $ls_result - ($sub_result1 + $sub_result2 + $sub_result3));
 }
 
 /**
@@ -264,6 +331,7 @@ function printLMLSBonusPrizeQuarterTable($postArray, &$listArray, $quarter) {
 
 	echo '<table>';
 	echo '<tr class="bg_wet_asphalt"><td width="50px">種目</td><td width="150px">実績(カッコ内は未登録店)</td><td width="100px">販促費(円)</td></tr>';
+
 	// LM
 	echo '<tr><td>LM</td>';
 	echo '<td class="right">'.$c_listArray['data_list']['LM']['result'][$quarter.'_quarter'].'台 ('.$c_listArray['data_list']['LM-M']['result'][$quarter.'_quarter'].'台)</td>';
@@ -283,8 +351,15 @@ function printLMLSBonusPrizeQuarterTable($postArray, &$listArray, $quarter) {
 
 	// LS
 	echo '<tr><td>LS</td>';
+	// 賞金計算（調整後実績値を使用）
+	$ls_adjusted_count = 0;
+	foreach ($listArray['executive_list'] as $executiveArray) {
+		$ls_adjusted_count += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], $quarter);
+	}
+
 	echo '<td class="right">'.$c_listArray['data_list']['LS']['result'][$quarter.'_quarter'].'台 (0台)</td>';
-	$prize = $c_listArray['data_list']['LS']['result'][$quarter.'_quarter'] * $c_listArray['branch_promotion']['LS:ryoritsuB_'.$quarter];
+	//$prize = $c_listArray['data_list']['LS']['result'][$quarter.'_quarter'] * $c_listArray['branch_promotion']['LS:ryoritsuB_'.$quarter];
+	$prize = $ls_adjusted_count * $c_listArray['branch_promotion']['LS:ryoritsuB_'.$quarter];
 	echo '<td class="right bg_yellow">'.formatNumber($prize).'</td></tr>';
 	echo '</table>';
 

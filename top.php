@@ -1212,6 +1212,58 @@ function printOneExecutiveQuarterResult($fiscal_year, $itemList, $eid) {
 
 /**
  * ----------------------------------------------------------
+ * getAdjustedExecutiveLSQuarterResult()
+ * 同友ごとの LS 四半期実績から補助科目を差し引いた値を取得する
+ * @param $fiscal_year：年度
+ * @param $executive_id：同友ID
+ * @param $quarter：四半期
+ * ----------------------------------------------------------
+ */
+function getAdjustedExecutiveLSQuarterResult($fiscal_year, $executive_id, $quarter) {
+
+    $ls_data = getExecutiveResultTotalValue($fiscal_year, 'LS', '%', 'TOTAL', $executive_id);
+    $sub_data1 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_1', '%', 'TOTAL', $executive_id);	// LS:sub_2_1 は、LSの補助科目の1つ
+    $sub_data2 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_4', '%', 'TOTAL', $executive_id);	// LS:sub_2_4 は、LSの補助科目の1つ
+    $sub_data3 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_5', '%', 'TOTAL', $executive_id);	// LS:sub_2_5 は、LSの補助科目の1つ
+
+    $ls_result = 0;
+    $sub_result1 = 0;
+    $sub_result2 = 0;
+    $sub_result3 = 0;
+
+	// 四半期ごとの合計値を作成
+    switch ($quarter) {
+        case 1:
+            $ls_result = $ls_data[0]['4_result'] + $ls_data[0]['5_result'] + $ls_data[0]['6_result'];
+            $sub_result1 = $sub_data1[0]['4_result'] + $sub_data1[0]['5_result'] + $sub_data1[0]['6_result'];
+            $sub_result2 = $sub_data2[0]['4_result'] + $sub_data2[0]['5_result'] + $sub_data2[0]['6_result'];
+            $sub_result3 = $sub_data3[0]['4_result'] + $sub_data3[0]['5_result'] + $sub_data3[0]['6_result'];
+            break;
+        case 2:
+            $ls_result = $ls_data[0]['7_result'] + $ls_data[0]['8_result'] + $ls_data[0]['9_result'];
+            $sub_result1 = $sub_data1[0]['7_result'] + $sub_data1[0]['8_result'] + $sub_data1[0]['9_result'];
+            $sub_result2 = $sub_data2[0]['7_result'] + $sub_data2[0]['8_result'] + $sub_data2[0]['9_result'];
+            $sub_result3 = $sub_data3[0]['7_result'] + $sub_data3[0]['8_result'] + $sub_data3[0]['9_result'];
+            break;
+        case 3:
+            $ls_result = $ls_data[0]['10_result'] + $ls_data[0]['11_result'] + $ls_data[0]['12_result'];
+            $sub_result1 = $sub_data1[0]['10_result'] + $sub_data1[0]['11_result'] + $sub_data1[0]['12_result'];
+            $sub_result2 = $sub_data2[0]['10_result'] + $sub_data2[0]['11_result'] + $sub_data2[0]['12_result'];
+            $sub_result3 = $sub_data3[0]['10_result'] + $sub_data3[0]['11_result'] + $sub_data3[0]['12_result'];
+            break;
+        case 4:
+            $ls_result = $ls_data[0]['1_result'] + $ls_data[0]['2_result'] + $ls_data[0]['3_result'];
+            $sub_result1 = $sub_data1[0]['1_result'] + $sub_data1[0]['2_result'] + $sub_data1[0]['3_result'];
+            $sub_result2 = $sub_data2[0]['1_result'] + $sub_data2[0]['2_result'] + $sub_data2[0]['3_result'];
+            $sub_result3 = $sub_data3[0]['1_result'] + $sub_data3[0]['2_result'] + $sub_data3[0]['3_result'];
+            break;
+    }
+	// LSの販促費は補助科目を差し引いた値で計算する
+    return max(0, $ls_result - ($sub_result1 + $sub_result2 + $sub_result3));
+}
+
+/**
+ * ----------------------------------------------------------
  * printOneExecutivePromotionResult()
  * 同友への販促費の獲得状況を表示
  * @param $fiscal_year：指定年度
@@ -1320,16 +1372,23 @@ function printOneExecutivePromotionResult($fiscal_year, $itemList, $eid) {
 				$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($resultTotalList[$itemArray['value']][$half_period]);
 			}
 			else if ($itemArray['value'] === 'LS') {
+
+			// LSの販促費は補助科目を差し引いた値で計算する
+				$adjusted_ls_result = getAdjustedExecutiveLSQuarterResult($fiscal_year, $eid, $half_period == 0 ? 1 : 2);
+
 				if ($fiscal_year != 2024) {
-					$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($resultTotalList[$itemArray['value']][$half_period]);
+					//$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($resultTotalList[$itemArray['value']][$half_period]);
+					$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($adjusted_ls_result);
 				}
 				else {
 					// 2024年は上期と下期でLSの販促費が異なるので、処理を追加
 					if ($half_period == 0) {
-						$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($resultTotalList[$itemArray['value']][$half_period]);
+						//$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($resultTotalList[$itemArray['value']][$half_period]);
+						$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_1'] * round($adjusted_ls_result);
 					}
 					else {
-						$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_2'] * round($resultTotalList[$itemArray['value']][$half_period]);
+						//$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_2'] * round($resultTotalList[$itemArray['value']][$half_period]);
+						$prize = $promotionInfo[$itemArray['value'].':ryoritsuE_2'] * round($adjusted_ls_result);
 					}
 				}
 			}

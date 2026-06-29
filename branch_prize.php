@@ -205,6 +205,58 @@ function makeBranchPrizeViewPage(&$postArray, &$listArray) {
 
 /**
  * ----------------------------------------------------------
+ * getAdjustedExecutiveLSQuarterResult()
+ * LSの販促費の計算は、LSの実績値から補助科目の実績値を引いた値を使用する
+ * @param $fiscal_year：年度
+ * @param $executive_id：同友ID
+ * @param $quarter：四半期
+ * @return $adjusted_result：調整後のLS実績値
+ * ----------------------------------------------------------
+ */
+function getAdjustedExecutiveLSQuarterResult($fiscal_year, $executive_id, $quarter) {
+
+    $ls_data = getExecutiveResultTotalValue($fiscal_year, 'LS', '%', 'TOTAL', $executive_id);
+    $sub_data1 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_1', '%', 'TOTAL', $executive_id); // 補助科目 2-1
+    $sub_data2 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_4', '%', 'TOTAL', $executive_id); // 補助科目 2-4
+    $sub_data3 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_5', '%', 'TOTAL', $executive_id); // 補助科目 2-5
+
+    $ls_result = 0;
+    $sub_result1 = 0;
+    $sub_result2 = 0;
+    $sub_result3 = 0;
+
+    switch ($quarter) {
+        case 1:
+            $ls_result = $ls_data[0]['4_result'] + $ls_data[0]['5_result'] + $ls_data[0]['6_result'];
+            $sub_result1 = $sub_data1[0]['4_result'] + $sub_data1[0]['5_result'] + $sub_data1[0]['6_result'];
+            $sub_result2 = $sub_data2[0]['4_result'] + $sub_data2[0]['5_result'] + $sub_data2[0]['6_result'];
+            $sub_result3 = $sub_data3[0]['4_result'] + $sub_data3[0]['5_result'] + $sub_data3[0]['6_result'];
+            break;
+        case 2:
+            $ls_result = $ls_data[0]['7_result'] + $ls_data[0]['8_result'] + $ls_data[0]['9_result'];
+            $sub_result1 = $sub_data1[0]['7_result'] + $sub_data1[0]['8_result'] + $sub_data1[0]['9_result'];
+            $sub_result2 = $sub_data2[0]['7_result'] + $sub_data2[0]['8_result'] + $sub_data2[0]['9_result'];
+            $sub_result3 = $sub_data3[0]['7_result'] + $sub_data3[0]['8_result'] + $sub_data3[0]['9_result'];
+            break;
+        case 3:
+            $ls_result = $ls_data[0]['10_result'] + $ls_data[0]['11_result'] + $ls_data[0]['12_result'];
+            $sub_result1 = $sub_data1[0]['10_result'] + $sub_data1[0]['11_result'] + $sub_data1[0]['12_result'];
+            $sub_result2 = $sub_data2[0]['10_result'] + $sub_data2[0]['11_result'] + $sub_data2[0]['12_result'];
+            $sub_result3 = $sub_data3[0]['10_result'] + $sub_data3[0]['11_result'] + $sub_data3[0]['12_result'];
+            break;
+        case 4:
+            $ls_result = $ls_data[0]['1_result'] + $ls_data[0]['2_result'] + $ls_data[0]['3_result'];
+            $sub_result1 = $sub_data1[0]['1_result'] + $sub_data1[0]['2_result'] + $sub_data1[0]['3_result'];
+            $sub_result2 = $sub_data2[0]['1_result'] + $sub_data2[0]['2_result'] + $sub_data2[0]['3_result'];
+            $sub_result3 = $sub_data3[0]['1_result'] + $sub_data3[0]['2_result'] + $sub_data3[0]['3_result'];
+            break;
+    }
+
+    return max(0, $ls_result - ($sub_result1 + $sub_result2 + $sub_result3));
+}
+
+/**
+ * ----------------------------------------------------------
  * printBranchPrizeResultTable()
  * 支部報奨金の実績結果を示すテーブルを表示
  * @param $postArray：POSTで送られてきたパラメータ
@@ -272,12 +324,29 @@ function printBranchPrizeResultTable($postArray, $listArray, $type, $period_num=
 		// 報奨金を計算
 		$prize = 0;
 		if ($itemArray['value'] === 'LM' || $itemArray['value'] === 'LS') {
+			if ($itemArray['value'] === 'LS') {
+				$adjusted_ls_result = 0;
+				foreach ($listArray['executive_list'] as $executiveArray) {
+					$adjusted_ls_result += getAdjustedExecutiveLSQuarterResult($postArray['fiscal_year'], $executiveArray['value'], $period_num);
+				}
+			}
 			// 2020年秋キャンペーンから追加
+			// LSの販促費の計算は、LSの実績値から補助科目の実績値を引いた値を使用する
 			if ($postArray['fiscal_year'] >= 2020) {
-				$prize = $listArray['data_list'][$itemArray['value']]['result'][$period] * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_'.$period_num];
+				if ($itemArray['value'] === 'LS') {
+					$prize = $adjusted_ls_result * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_'.$period_num];
+				}
+				else {
+					$prize = $listArray['data_list'][$itemArray['value']]['result'][$period] * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_'.$period_num];
+				}
 			}
 			else {
-				$prize = $listArray['data_list'][$itemArray['value']]['result'][$period] * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_1'];
+				if ($itemArray['value'] === 'LS') {
+					$prize = $adjusted_ls_result * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_1'];
+				}
+				else {
+					$prize = $listArray['data_list'][$itemArray['value']]['result'][$period] * $listArray['branch_promotion'][$itemArray['value'].':ryoritsuB_1'];
+				}
 			}
 			$applicableReach = '----';
 		}
