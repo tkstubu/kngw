@@ -276,9 +276,9 @@ function printLMLSBonusPrizeTable($postArray, &$listArray) {
 function getAdjustedExecutiveLSQuarterResult($fiscal_year, $executive_id, $quarter) {
 
     $ls_data = getExecutiveResultTotalValue($fiscal_year, 'LS', '%', 'TOTAL', $executive_id);
-	$sub_data1 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_1', '%', 'TOTAL', $executive_id);	// 補助科目 2-1
-	$sub_data2 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_4', '%', 'TOTAL', $executive_id);	// 補助科目 2-4
-    $sub_data3 = getExecutiveResultTotalValue($fiscal_year, 'LS:sub_2_5', '%', 'TOTAL', $executive_id);	// 補助科目 2-5
+	$sub_data1 = getExecutiveResultTotalValue($fiscal_year, local_config::LS_HOJO_ITEM_1, '%', 'TOTAL', $executive_id);	// 補助科目 2-1
+	$sub_data2 = getExecutiveResultTotalValue($fiscal_year, local_config::LS_HOJO_ITEM_2, '%', 'TOTAL', $executive_id);	// 補助科目 2-4
+    $sub_data3 = getExecutiveResultTotalValue($fiscal_year, local_config::LS_HOJO_ITEM_3, '%', 'TOTAL', $executive_id);	// 補助科目 2-5
 
     $ls_result = 0;
     $sub_result1 = 0;

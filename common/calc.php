@@ -599,7 +599,6 @@ function getCalcCampeignPoint($fiscal_year, $campaign, $item) {
 		    $reachPoint = config::REACH_POINT_MAX;
         }
 	}
-    }
 
     // 2026年度のLHにおいては、サマーキャンペーン、秋キャンペーン、春キャンペーンのすべてにおいて、参加率得点を100点加算する
     if ($fiscal_year == 2026 && $item === 'LH' && in_array($campaign, ['summer', 'autumn', 'spring'])) {
