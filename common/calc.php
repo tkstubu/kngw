@@ -596,6 +596,11 @@ function getCalcCampeignPoint($fiscal_year, $campaign, $item) {
         $enterablePoint += 100;
         $reachPoint += 100;
     }
+
+    // 2026年度のLHにおいては、サマーキャンペーン、秋キャンペーン、春キャンペーンのすべてにおいて、参加率得点を100点加算する
+    if ($fiscal_year == 2026 && $item === 'LH' && in_array($campaign, ['summer', 'autumn', 'spring'])) {
+        $enterablePoint += 100;
+    }
     
     // 計算に使用した数値
     $point['enterableNum']             = $enterableNum;             // 参加同友数
