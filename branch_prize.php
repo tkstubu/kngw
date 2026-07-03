@@ -350,6 +350,11 @@ function printBranchPrizeResultTable($postArray, $listArray, $type, $period_num=
 			}
 			$applicableReach = '----';
 		}
+		// 2026年度の第一四半期のLOに限り、料率は2.2%で固定
+		else if ($postArray['fiscal_year'] == 2026 && $period_num == 1 && $itemArray['value'] === 'LO') {
+			$prize = $result * 2.2;
+			$applicableReach = 2.2;
+		}
 		else {
 			// 該当する料率を判定
 			for ($i = 1; $i <= 5; $i=$i+2) {

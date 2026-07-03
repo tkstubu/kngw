@@ -479,6 +479,10 @@ function printQuarterPrizeItemTable($fiscal_year, &$listArray, $item, $quarter) 
 			}
 		} // FEATURE_FIXED_POINT_AND_RATE
 	}
+	// 2026年度の第一四半期のLOに限り、料率は2.2%で固定
+	if ($fiscal_year == 2026 && $quarter == 1 && $item === "LO") {
+		$rate = 2.2;
+	}
 
 	// 販促費計算(実績は1000円単位なので1000倍してから計算する)
 	// 実績は1000円単位で小数点なしで計算する（社長賞シミュレーションのExcelでも小数点はナシの数値で計算する by カナメ山内）
@@ -618,8 +622,21 @@ function printCampaignPrizeItemTable(&$listArray, $fiscal_year, $campaign, $item
 		//printArray($c_listArray['campaign_promotion']);
 	} // FEATURE_FIXED_POINT_AND_RATE
 
+	// キャンペーン得点の計算
 	$campaignPoint = getCalcCampeignPoint($fiscal_year, $campaign, $item);
 	$point = getCalcCampeignBonusPoint($campaignPoint, $fiscal_year, $campaign);
+
+	// 2026年度のLOにおけるサマーキャンペーン表彰はボーナスポイントを10点加点する
+	if ($fiscal_year == 2026 && $campaign === "summer" && $item === "LO") {
+		// ボーナスポイントは加算前のポイントで計算する
+		$campaignPoint['total'] -= 300;
+		$campaignPoint['reach'] -= 100;
+		$point = getCalcCampeignBonusPoint($campaignPoint, $fiscal_year, $campaign);
+		$point += 10;
+		// キャンペーンの得点を元に戻す
+		$campaignPoint['total'] += 300;
+		$campaignPoint['reach'] += 100;
+	}
 
 	// 他で計算するために販売基準同友数をListArrayに保存
 	if ($listArray['baseEnterableNum'] == 0) {
