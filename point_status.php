@@ -304,6 +304,12 @@ function printExcutiveWorkingAndMintargetPointTable($postArray, &$listArray) {
 		echo '<tr><td class="left">'.$itemArray['value'].'</td><td>'.$lowest_sell_reach_point.'</td>';
 		$point = floor(($e_item_min_count[$itemArray['value']] / $e_count)*$lowest_sell_reach_point);	// 最低販売基準達成同友数
 		//$point = (($e_item_min_count[$itemArray['value']] / $e_count)*$lowest_sell_reach_point);	// 最低販売基準達成同友数
+
+		// 2026年度のLHにおいては無条件で30点とする
+		if ($postArray['fiscal_year'] == 2026 && $itemArray['value'] === 'LH') {
+			$point = 30;
+		}
+		
 		$listArray['point_status']['other'] += $point;									// 法人事業合計に加算
 		echo '<td class="right">'.$point.'</td></tr>';
 		//echo '<td class="right">'.$e_item_min_count[$itemArray['value']].' '.$e_count.' '.$point.'</td></tr>';

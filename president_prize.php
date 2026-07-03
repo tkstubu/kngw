@@ -1260,6 +1260,10 @@ function printWorkingTable($postArray, &$listArray) {
 			echo '<td>'.$e_item_min_count[$itemArray['value']].'</td>';		// 最低販売基準達成同友数
 			echo '<td>'.$e_count.'</td>';									// 支部販売基準同友数
 			$point = floor(($e_item_min_count[$itemArray['value']] / $e_count)*30);		// 最低販売基準達成同友数の同友会得点計算
+			// 2026年度のLHにおいては無条件で30点とする
+			if ($postArray['fiscal_year'] == 2026 && $itemArray['value'] === 'LH') {
+				$point = 30;
+			}
 			echo '<td>'.$point.'</td></tr>';
 			$listArray['point'] += $point;												// 法人事業合計に加算
 		
