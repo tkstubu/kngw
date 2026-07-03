@@ -796,7 +796,38 @@ if ($page === 'view') { ?>
 		<tr class="bg_wet_asphalt"><td width="200px">項目</td><td width="80px">達成得点</td><td width="80px">得点</td></tr>
 		<?php
 		$month = $listArray['data_list']['LC_hold_month'];
-		$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*50));
+
+		// LC保有計画達成を計算
+		if ($postArray['fiscal_year'] <= 2025) {
+			// 100%未満 得点率ｘ50点、100%以上 得点率ｘ50点（上限なし）
+			$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*50));
+		}
+		else if ($postArray['fiscal_year'] == 2025 || $postArray['fiscal_year'] == 2026) {
+			// 90%未満 得点なし
+			if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) < 0.9) {
+				$lc_hold_point = 0;
+			}
+			// 90%以上100%未満 得点率ｘ30点
+			else if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) >= 0.9 && ($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) < 1) {
+				$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*30));
+			}
+			// 100%以上 得点率ｘ60点（上限なし）
+			else if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) >= 1) {
+				$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*60));
+			}
+		}
+		else if ($postArray['fiscal_year'] >= 2027) {
+			// 100%未満 特典なし
+			if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) < 1) {
+				$lc_hold_point = 0;
+			}
+			// 100%以上 得点率ｘ60点（上限なし）
+			else if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) >= 1) {
+				$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*60));
+			}
+		}
+		
+		// LC保有計画達成の得点を加算
 		$b_point += $lc_hold_point;
 		?>
 		<tr><td class="left">LC保有計画達成 (※<?php echo $month?>月時点)</td><td>50</td>
