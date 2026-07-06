@@ -592,7 +592,7 @@ function getCalcCampeignPoint($fiscal_year, $campaign, $item) {
 
     // 2026年度のLOにおけるサマーキャンペーン表彰は生産性得点、参加率得点、達成率得点に無条件で100点を加算する
     if ($fiscal_year == 2026 && $item === 'LO' && $campaign === 'summer') {
-        $productPoint += 100;
+        $productPoint = 100;
         $enterablePoint = 100;
         $reachPoint += 100;
         if ($reachPoint > config::REACH_POINT_MAX) {

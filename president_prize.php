@@ -627,16 +627,16 @@ function printCampaignPrizeItemTable(&$listArray, $fiscal_year, $campaign, $item
 	$point = getCalcCampeignBonusPoint($campaignPoint, $fiscal_year, $campaign);
 
 	// 2026年度のLOにおけるサマーキャンペーン表彰はボーナスポイントを10点加点する
-	if ($fiscal_year == 2026 && $campaign === "summer" && $item === "LO") {
-		// ボーナスポイントは加算前のポイントで計算する
-		$campaignPoint['total'] -= 300;
-		$campaignPoint['reach'] -= 100;
-		$point = getCalcCampeignBonusPoint($campaignPoint, $fiscal_year, $campaign);
-		$point += 10;
-		// キャンペーンの得点を元に戻す
-		$campaignPoint['total'] += 300;
-		$campaignPoint['reach'] += 100;
-	}
+	// if ($fiscal_year == 2026 && $campaign === "summer" && $item === "LO") {
+	// 	// ボーナスポイントは加算前のポイントで計算する
+	// 	$campaignPoint['total'] -= 300;
+	// 	$campaignPoint['reach'] -= 100;
+	// 	$point = getCalcCampeignBonusPoint($campaignPoint, $fiscal_year, $campaign);
+	// 	$point += 10;
+	// 	// キャンペーンの得点を元に戻す
+	// 	$campaignPoint['total'] += 300;
+	// 	$campaignPoint['reach'] = 100;
+	// }
 
 	// 他で計算するために販売基準同友数をListArrayに保存
 	if ($listArray['baseEnterableNum'] == 0) {
