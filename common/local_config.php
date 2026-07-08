@@ -31,9 +31,9 @@ class local_config {
 	const EXCEL_ROW_NUM = 30;
 
 	// LSの販促費の計算は、LSの実績値から補助科目の実績値を引いた値を使用するための補助科目一覧
-	const LS_HOJO_ITEM_1 = 'LS:sub_2_1';
-	const LS_HOJO_ITEM_2 = 'LS:sub_2_4';
-	const LS_HOJO_ITEM_3 = 'LS:sub_2_5';
+	const LS_HOJO_ITEM_1 = 'LS:sub_2_10';
+	const LS_HOJO_ITEM_2 = 'LS:sub_2_10';
+	const LS_HOJO_ITEM_3 = 'LS:sub_2_10';
 
 	//-------------------------------------------------------------
 	// 機能別フラグ設定
