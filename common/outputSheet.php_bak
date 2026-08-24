@@ -882,7 +882,6 @@ function makeExecutiveDownloadSheet($fiscal_year, $campaign) {
 					$columnCnt += 2;
 				}
 			}
-			
 			//printArray($planTotalList);
 
 			// シート数をカウント
@@ -1044,7 +1043,7 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 		if ($executiveArray['exitdate'] !== "0000-00-00") {
 			// 退会済みの同友であっても、年度内は実績報告には表示する
 			$expire = preg_split("/-/", $executiveInfo['exitdate']);
-			if ( ($expire[0] = $fiscal_year+1 && $expire[1] <= 3) || ($expire[0] <= $fiscal_year && $expire[1] > 3)){ 
+			if ( ($expire[0] <= $fiscal_year+1 && $expire[1] <= 3) || ($expire[0] <= $fiscal_year && $expire[1] > 3)){ 
 				// 表示する
 			}
 			else {
@@ -1082,23 +1081,6 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				// 提携企業毎の計画と実績を保存
 				$companyPlanList += array($itemArray['value'].'_'.$partnerArray['value'] => $planData[$campaign.'_plan']);
 				$companyResultList += array($itemArray['value'].'_'.$partnerArray['value'] => $resultData['result']);
-
-				// LMの上期、下期、年間合計を取得
-				if ($itemArray['value'] === 'LM') {
-					$resultData = getExecutiveResultTotalValue($fiscal_year, $itemArray['value'], '%', $partnerArray['value'], $executiveArray['value']);
-					
-					// 上期
-					$lm_h1_result =  $resultData[0]['4_result']+$resultData[0]['5_result']+$resultData[0]['6_result']+$resultData[0]['7_result']+$resultData[0]['8_result']+$resultData[0]['9_result'];
-					$companyResultList += array($itemArray['value'].'_half1_total' => $lm_h1_result);
-
-					// 下期
-					$lm_h2_result =  $resultData[0]['10_result']+$resultData[0]['11_result']+$resultData[0]['12_result']+$resultData[0]['1_result']+$resultData[0]['2_result']+$resultData[0]['3_result'];
-					$companyResultList += array($itemArray['value'].'_half2_total' => $lm_h2_result);
-					
-					// 年間合計
-					$lm_total_result =  $lm_h1_result + $lm_h2_result;
-					$companyResultList += array($itemArray['value'].'_year_total' => $lm_total_result);
-				}
 
 				// LOだけ6月、10月、2月分を企業別に取得
 				if ($itemArray['value'] === 'LO') {
@@ -1534,11 +1516,6 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(64, $eastCnt, $companyResultList['LC_7m_total']);
 				$objSheet->setCellValueByColumnAndRow(65, $eastCnt, $companyResultList['LC_11m_total']);
 				$objSheet->setCellValueByColumnAndRow(66, $eastCnt, $companyResultList['LC_3m_total']);
-
-				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(67, $eastCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(68, $eastCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $eastCnt, $companyResultList['LM_year_total']);
 			}
 			// 中央地区
 			if ($executiveArray['area'] === '中央地区') {
@@ -1609,11 +1586,6 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(64, $centralCnt, $companyResultList['LC_7m_total']);
 				$objSheet->setCellValueByColumnAndRow(65, $centralCnt, $companyResultList['LC_11m_total']);
 				$objSheet->setCellValueByColumnAndRow(66, $centralCnt, $companyResultList['LC_3m_total']);
-
-				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(67, $centralCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(68, $centralCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $centralCnt, $companyResultList['LM_year_total']);
 			}
 			// 西地区
 			if ($executiveArray['area'] === '西地区') {
@@ -1684,11 +1656,6 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				$objSheet->setCellValueByColumnAndRow(64, $westCnt, $companyResultList['LC_7m_total']);
 				$objSheet->setCellValueByColumnAndRow(65, $westCnt, $companyResultList['LC_11m_total']);
 				$objSheet->setCellValueByColumnAndRow(66, $westCnt, $companyResultList['LC_3m_total']);
-
-				// LM 上期、下期、年間
-				$objSheet->setCellValueByColumnAndRow(67, $westCnt, $companyResultList['LM_half1_total']);
-				$objSheet->setCellValueByColumnAndRow(68, $westCnt, $companyResultList['LM_half2_total']);
-				$objSheet->setCellValueByColumnAndRow(69, $westCnt, $companyResultList['LM_year_total']);
 			}
 
 			// 同友に出力する行を次の同友に移動させる
@@ -1736,12 +1703,8 @@ function makeCampaignDownloadSheet_for_kngw($fiscal_year, $campaign, $target) {
 				// LC 7月、11月、3月
 				$objSheet->setCellValueByColumnAndRow(20, 7, $companyResultList['LC_7m_total']);
 				$objSheet->setCellValueByColumnAndRow(21, 7, $companyResultList['LC_11m_total']);
-				$objSheet->setCellValueByColumnAndRow(22, 7, $companyResultList['LC_3m_total']);
-				
-				// LM 上期、下期、年間を合算して出力
-				$objSheet->setCellValueByColumnAndRow(20, 14, $companyResultList['LM_half1_total']); 	// LM上期(U列)
-				$objSheet->setCellValueByColumnAndRow(21, 14, $companyResultList['LM_half2_total']); 	// LM下期(V列)
-				$objSheet->setCellValueByColumnAndRow(22, 14, $companyResultList['LM_year_total']); 	// LM年間(W列)
+				$objSheet->setCellValueByColumnAndRow(22, 7, $companyResultList['LC_3m_total']);				
+
 				
 				//---------------------------------------------------
 				// 同友チャレンジシート

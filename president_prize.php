@@ -677,6 +677,10 @@ function printCampaignPrizeItemTable(&$listArray, $fiscal_year, $campaign, $item
 				}
 			} // FEATURE_FIXED_POINT_AND_RATE
 		}
+		// 2026年度サマーキャンペーンのLOは料率を0.7%で固定
+		if ($fiscal_year == 2026 && $campaign === 'summer' && $item === 'LO') {
+			$rate = 0.7;
+		}
 
 		//$rate = $rate.' %';
 		// 販促費計算(実績は1000円単位なので1000倍してから計算する)
@@ -696,7 +700,13 @@ function printCampaignPrizeItemTable(&$listArray, $fiscal_year, $campaign, $item
 
 	// 参加率が100%の場合、賞金額の10%を加算し、小数点以下第一位を四捨五入して整数で表示
 	// 参加率が100%以外の場合は小数点以下第一位を四捨五入して整数で表示
-	if ($campaignPoint['enterable'] >= config::ENTERABLE_POINT_MAX && $item !== 'LH') {
+	// 賞金計算
+	if ($fiscal_year == 2026 && $campaign === 'summer' && $item === 'LO') {
+		// 2026年度サマーキャンペーンのLOは参加率・10%加算を適用しない
+		$prize = round(($result * 1000) * ($rate / 100));
+	}
+	else if ($campaignPoint['enterable'] >= config::ENTERABLE_POINT_MAX && $item !== 'LH') {
+		// 参加率100%の場合は10%加算
 		$prize = round($prize + ($prize * 0.1), 0);
 	}
 	else {
@@ -834,7 +844,35 @@ function printYearPrizeItemTable($postArray, &$listArray, $item) {
 		$result = $lc_result['LC_hold_number'];	// 最新のLC保有枚数
 
 		if ($plan > 0) {
-			$point = floor(($result/$plan) * 50);
+			$reach = $result / $plan;
+
+			if ($fiscal_year <= 2025) {
+				// 100%未満、100%以上ともに達成率 x 50点
+				$point = floor($reach * 50);
+			}
+			elseif ($fiscal_year == 2026) {
+				// 90%未満は0点
+				if ($reach < 0.9) {
+					$point = 0;
+				}
+				// 90%以上100%未満は達成率 x 30点
+				elseif ($reach < 1) {
+					$point = floor($reach * 30);
+				}
+				// 100%以上は達成率 x 60点
+				else {
+					$point = floor($reach * 60);
+				}
+			}
+			else {
+				// 2027年度以降は100%未満は0点、100%以上は達成率 x 60点
+				if ($reach < 1) {
+					$point = 0;
+				}
+				else {
+					$point = floor($reach * 60);
+				}
+			}
 		}
 	}
 	

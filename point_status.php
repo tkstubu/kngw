@@ -808,7 +808,7 @@ if ($page === 'view') { ?>
 			// 100%未満 得点率ｘ50点、100%以上 得点率ｘ50点（上限なし）
 			$lc_hold_point = floor(($listArray['data_list']['LC_hold_number']/$listArray['lc_hold_number']['lc_year_target_count']*50));
 		}
-		else if ($postArray['fiscal_year'] == 2025 || $postArray['fiscal_year'] == 2026) {
+		else if ($postArray['fiscal_year'] == 2026) {
 			// 90%未満 得点なし
 			if (($listArray['data_list']['LC_hold_number'] / $listArray['lc_hold_number']['lc_year_target_count']) < 0.9) {
 				$lc_hold_point = 0;
