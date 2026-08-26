@@ -2747,6 +2747,18 @@ function getCampaignExcellentPlan($fiscal_year, $campaign, $item, $resultData) {
 	if ($reachPoint > config::REACH_POINT_MAX) {
 		$reachPoint = config::REACH_POINT_MAX;
 	}
+
+	// 2026年度のLOは各得点を100点固定
+	if ($fiscal_year == 2026 && $item['value'] === 'LO' && $campaign === 'summer') {
+		$productPoint = 100;
+		$enterablePoint = 100;
+		$reachPoint = 100;
+	}
+
+	// 2026年度のLHは、全キャンペーンで参加率得点を100点固定
+	if ($fiscal_year == 2026 && $item['value'] === 'LH' && in_array($campaign, ['summer', 'autumn', 'spring'])) {
+		$enterablePoint = 100;
+	}
 	
 	// 合計点
 	$totalPoint = $productPoint+$enterablePoint+$reachPoint;
