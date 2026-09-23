@@ -969,7 +969,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_unit;
+						//$t_reachrate = $result / $target_unit;
+						$t_reachrate = round(($result / $target_unit) * 100, 1) / 100;
 					}
 					break;
 
@@ -982,7 +983,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_cost;
+						//$t_reachrate = $result / $target_cost;
+						$t_reachrate = round(($result / $target_cost) * 100, 1) / 100;
 					}
 					break;
 
@@ -1032,7 +1034,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_unit;
+						//$t_reachrate = $result / $target_unit;
+						$t_reachrate = round(($result / $target_unit) * 100, 1) / 100;
 					}
 					break;
 
@@ -1100,7 +1103,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_unit;
+						//$t_reachrate = $result / $target_unit;
+						$t_reachrate = round(($result / $target_unit) * 100, 1) / 100;
 					}
 					break;
 				
@@ -1155,7 +1159,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_cost;
+						//$t_reachrate = $result / $target_cost;
+						$t_reachrate = round(($result / $target_cost) * 100, 1) / 100;
 					}
 					break;
 
@@ -1183,7 +1188,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / ($denominator*$target_rate);
+						//$t_reachrate = $result / ($denominator*$target_rate);
+						$t_reachrate = round(($result / ($denominator * $target_rate)) * 100, 1) / 100;
 					}
 					break;
 
@@ -1212,7 +1218,8 @@ function printPartnerPrize($item, $num, $postArray, $listArray) {
 						$clearFlag = true;
 
 						// 実績の達成率を計算
-						$t_reachrate = $result / $target_cost;
+						//$t_reachrate = $result / $target_cost;
+						$t_reachrate = round(($result / $target_cost) * 100, 1) / 100;
 					}
 					break;
 

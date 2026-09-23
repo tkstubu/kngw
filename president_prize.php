@@ -1337,6 +1337,14 @@ function printWorkingTable($postArray, &$listArray) {
 		for (i = 0; i < 6; i++) {
 			working_prize_table.rows[1].cells[i+1].innerText = point[i].toLocaleString();
 		}
+
+		// 2026年度のLHにおいては無条件で30点とするため、LH自動車列を非表示にする
+		var workingRows = document.querySelectorAll('#working_prize tr');
+		workingRows.forEach(function(row) {
+			if (row.cells.length > 3) {
+				row.cells[3].style.display = 'none'; // LH自動車列
+			}
+		});
 	</script>
 
 <?php
