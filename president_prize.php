@@ -480,7 +480,7 @@ function printQuarterPrizeItemTable($fiscal_year, &$listArray, $item, $quarter) 
 		} // FEATURE_FIXED_POINT_AND_RATE
 	}
 	// 2026年度の第一四半期のLOに限り、料率は2.2%で固定
-	if ($fiscal_year == 2026 && $quarter == 1 && $item === "LO") {
+	if ($fiscal_year == 2026 &&  ($quarter == 1 || $quarter == 2)  && $item === "LO") {
 		$rate = 2.2;
 	}
 
